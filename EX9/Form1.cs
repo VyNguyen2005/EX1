@@ -30,18 +30,8 @@ namespace EX9
             {
                 return;
             }
-            string ml = comboBox1.SelectedItem.ToString();
-            List<HOCVIEN> dsHV = new List<HOCVIEN>();
-            foreach (HOCVIEN hv in HOCVIENs)
-            {
-                if(hv.maLH == ml)
-                {
-                    dsHV.Add(hv);
-                }
-            }
-            listBox1.DisplayMember = "tenHV";
-            listBox1.SelectedValue = "maHV";
-            listBox1.DataSource = dsHV;
+            LOPHOC lh = comboBox1.SelectedItem as LOPHOC;
+            label7.Text = lh.thanhTien.ToString("#,##0$");
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -53,6 +43,7 @@ namespace EX9
 
         private void KhoiTaoListBox()
         {
+            listBox1.DataSource = null;
             listBox1.DisplayMember = "tenHV";
             listBox1.ValueMember = "maHV";
             listBox1.DataSource = HOCVIENs;
@@ -101,6 +92,63 @@ namespace EX9
             {
                 return;
             }
+            HOCVIEN hv = listBox1.SelectedItem as HOCVIEN;
+            textBox1.Text = hv.maHV;
+            textBox2.Text = hv.tenHV;
+            comboBox1.SelectedValue = hv.maLH;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            DialogResult tl = MessageBox.Show($"Bạn có muốn xoá thông tin học viên {textBox2.Text}?", "Thông báo", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (tl == DialogResult.Yes)
+            {
+                HOCVIENs.Remove(listBox1.SelectedItem as HOCVIEN);
+                listBox1.SelectedIndex = 0;
+                KhoiTaoListBox();
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            foreach (Control control in this.groupBox1.Controls)
+            {
+                if(control is TextBox)
+                {
+                    (control as TextBox).Clear();
+                }
+            }
+            textBox1.Focus();
+            textBox1.ReadOnly = false;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            HOCVIEN hv;
+            if (!textBox1.ReadOnly)
+            {
+                hv = new HOCVIEN();
+                hv.maHV = textBox1.Text;
+                hv.tenHV = textBox2.Text;
+                hv.maLH = comboBox1.SelectedValue.ToString();
+                HOCVIENs.Add(hv);
+                KhoiTaoListBox();
+                listBox1.SelectedIndex = listBox1.Items.IndexOf(hv);
+            }
+            else
+            {
+                hv = listBox1.SelectedItem as HOCVIEN;
+                hv.tenHV = textBox2.Text;
+                hv.maLH = comboBox1.SelectedValue.ToString();
+                KhoiTaoListBox();
+                listBox1.SelectedIndex = listBox1.Items.IndexOf(hv); 
+            }
+            textBox1.ReadOnly = true;
+            comboBox1_SelectedIndexChanged(sender, e);
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
 
         }
     }
